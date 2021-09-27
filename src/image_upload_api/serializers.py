@@ -10,6 +10,11 @@ class ImageSerializer(ModelSerializer):
         model = Image
         fields = '__all__'
 
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        photo_url = instance.image.url
+        return request.build_absolute_uri(photo_url)
+
 
 class ArticleSerializer(ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
