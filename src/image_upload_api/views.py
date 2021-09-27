@@ -1,14 +1,16 @@
 # coding=utf-8
-from django.views.generic import CreateView, DetailView
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
 
 from image_upload_api.models import Article
 from image_upload_api.serializers import ArticleSerializer
 
 
-class ArticleViewSet(ModelViewSet):
+class ArticleView(CreateAPIView):
     serializer_class = ArticleSerializer
-    queryset = Article.objects.all()
-    parser_classes = (MultiPartParser, FormParser)
 
+    def get(self, request):
+        instance, _ = Article.objects.get_or_create()
+        context = {'request': request}
+        serializer = ArticleSerializer(instance, context=context)
+        return Response(serializer.data)
